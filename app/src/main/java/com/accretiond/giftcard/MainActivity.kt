@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,11 +24,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.accretiond.giftcard.ui.theme.GiftCardTheme
 
@@ -51,21 +61,27 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 fun GreetingText(message: String,
                  from: String,
                  modifier: Modifier = Modifier) {
 
+    val gradiendColors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.tertiary)
+
     Column(
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Bottom,
         modifier = modifier
     ) {
         Text(
-            text = message,
-            fontSize = 95.sp,
-            lineHeight = 116.sp,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.primary
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(brush = Brush.linearGradient(gradiendColors))) {
+                    append(message)
+                }
+            },
+            fontSize = 45.sp,
+            lineHeight = 50.sp,
+            textAlign = TextAlign.Start
         )
 
         Column(
@@ -74,15 +90,27 @@ fun GreetingText(message: String,
                 .padding(16.dp)
         ) {
             Text(
-                text = "From",
-                fontSize= 14.sp,
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.align(Alignment.End).padding(top = 4.dp)
-            )
-            Text(
-                text = from,
-                fontSize= 30.sp,
-                color = MaterialTheme.colorScheme.secondary,
+                text = buildAnnotatedString {
+                    withStyle(ParagraphStyle(textAlign = TextAlign.End)) {
+                        withStyle(SpanStyle(fontSize = 14.sp)) {
+                            append("From\n")
+                        }
+                        withStyle(SpanStyle(fontSize = 30.sp)) {
+                            append(from)
+                        }
+                    }
+
+                },
+                color = MaterialTheme.colorScheme.tertiary,
+                style = LocalTextStyle.current.merge(
+                    TextStyle(
+                        lineHeight = 2.5.em,
+                        lineHeightStyle = LineHeightStyle(
+                            alignment = LineHeightStyle.Alignment.Center,
+                            trim = LineHeightStyle.Trim.None
+                        )
+                    )
+                ),
                 modifier = Modifier.align(Alignment.End)
             )
         }
