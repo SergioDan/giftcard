@@ -8,4 +8,7 @@
     <string name="permission_explanation">This permission is important for this app. Please allow its usage.</string>
     <string name="permission_alert_title">Permission request</string>
     <string name="permission_alert_confirm">Allow</string>
+
+    <string name="no_camera">Oh! yikes, no Camera!</string>
+    <string name="open_settings">Open Settings</string>
 </resources>

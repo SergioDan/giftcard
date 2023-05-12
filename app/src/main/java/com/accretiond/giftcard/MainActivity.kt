@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.accretiond.giftcard.screens.CameraScreenContent
 import com.accretiond.giftcard.ui.theme.GiftCardTheme
 
 class MainActivity : ComponentActivity() {
@@ -51,10 +52,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    GreetingImage(
-                        message = stringResource(R.string.happy_mother_s_day_mom),
-                        from = stringResource(R.string.your_son_and_husband)
-                    )
+//                    GreetingImage(
+//                        message = stringResource(R.string.happy_mother_s_day_mom),
+//                        from = stringResource(R.string.your_son_and_husband)
+//                    )
+                    CameraScreenContent(Modifier.fillMaxSize())
                 }
             }
         }
