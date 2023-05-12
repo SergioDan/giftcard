@@ -4,4 +4,8 @@
     <string name="your_son">Your son</string>
     <string name="your_son_and_husband">Your son and Husband</string>
     <string name="your_brother">Your brother</string>
+
+    <string name="permission_explanation">This permission is important for this app. Please allow its usage.</string>
+    <string name="permission_alert_title">Permission request</string>
+    <string name="permission_alert_confirm">Allow</string>
 </resources>
