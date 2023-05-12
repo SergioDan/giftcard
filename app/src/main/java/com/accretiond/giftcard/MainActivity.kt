@@ -122,9 +122,9 @@ fun GreetingText(message: String,
 fun GreetingImage(message: String,
                  from: String,
                  modifier: Modifier = Modifier) {
-    val image = painterResource(id = R.drawable.p_20210704_140942)
+    val image = painterResource(id = R.drawable.androidparty)
 
-    Box {
+    Box(modifier) {
         Image(
             painter = image,
             contentDescription = null,
