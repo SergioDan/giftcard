@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">GiftCard</string>
     <string name="happy_mother_s_day_mom">Happy Mother\'s Day! 🥳🎉</string>
     <string name="your_son">Your son</string>
@@ -12,4 +12,5 @@
     <string name="no_camera">Oh! yikes, no Camera!</string>
     <string name="open_settings">Open Settings</string>
     <string name="capture">📸</string>
+    <string name="loved_ones">Your Family</string>
 </resources>

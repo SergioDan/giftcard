@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.NavigateNext
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +33,7 @@ import androidx.core.net.toUri
 import com.accretiond.giftcard.R
 import com.accretiond.giftcard.composables.CameraCapture
 import com.accretiond.giftcard.composables.Permission
+import com.accretiond.styletransfer.TransformationActivity
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import java.io.File
@@ -75,12 +79,24 @@ fun CameraContent(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CameraMainContent(
-    modifier: Modifier
+    modifier: Modifier,
+    onStyledImage: (String) -> Unit = {}
 ) {
     val emptyImageUri = Uri.parse("file://dev/null")
     var imageUri by remember {
         mutableStateOf(emptyImageUri)
     }
+
+    val context = LocalContext.current
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = {
+            it.data?.getStringExtra("styled_path")?.let {styledPath ->
+                onStyledImage(styledPath)
+            }
+        }
+    )
 
     if (imageUri != emptyImageUri) {
         Box(modifier) {
@@ -89,12 +105,23 @@ fun CameraMainContent(
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize()
             )
-            IconButton(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                onClick = {
-                    imageUri = emptyImageUri
-                }) {
-                Icon(imageVector = Icons.Outlined.Delete, contentDescription = "delete button")
+            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                IconButton(
+                    onClick = {
+                        imageUri = emptyImageUri
+                    }) {
+                    Icon(imageVector = Icons.Outlined.Delete, contentDescription = "delete button")
+                }
+                IconButton(
+                    onClick = {
+                        launcher.launch(
+                            Intent(context, TransformationActivity::class.java).apply {
+                                this.putExtra("path", imageUri.path)
+                            }
+                        )
+                    }) {
+                    Icon(imageVector = Icons.Outlined.NavigateNext, contentDescription = "go next")
+                }
             }
         }
     } else {

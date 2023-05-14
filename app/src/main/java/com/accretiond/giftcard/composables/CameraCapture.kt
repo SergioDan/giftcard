@@ -35,7 +35,7 @@ import java.io.File
 @Composable
 fun CameraCapture(
     modifier: Modifier,
-    cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA,
+    cameraSelector: CameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA,
     onImageFile: (File) -> Unit = { }
 ) {
     Box(
@@ -53,6 +53,7 @@ fun CameraCapture(
             mutableStateOf(
                 ImageCapture.Builder()
                     .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                    .setTargetRotation(0)
                     .build()
             )
         }
