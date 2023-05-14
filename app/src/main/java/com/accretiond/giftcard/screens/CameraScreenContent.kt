@@ -5,19 +5,34 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.accretiond.giftcard.R
-import com.accretiond.giftcard.composables.CameraPreview
+import com.accretiond.giftcard.composables.CameraCapture
 import com.accretiond.giftcard.composables.Permission
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import java.io.File
 
 @Composable
 fun NoPermissionContent(modifier: Modifier, context: Context) {
@@ -39,8 +54,9 @@ fun NoPermissionContent(modifier: Modifier, context: Context) {
 }
 
 @Composable
-fun CameraScreenContent(
-    modifier: Modifier = Modifier
+fun CameraContent(
+    modifier: Modifier = Modifier,
+    onImageFile: (File) -> Unit = { }
 ) {
     val context = LocalContext.current
     Permission(
@@ -49,6 +65,45 @@ fun CameraScreenContent(
             NoPermissionContent(modifier = modifier, context = context)
         }
     ) {
-        CameraPreview(modifier = modifier)
+        CameraCapture(
+            modifier = modifier,
+            onImageFile = onImageFile
+        )
     }
 }
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun CameraMainContent(
+    modifier: Modifier
+) {
+    val emptyImageUri = Uri.parse("file://dev/null")
+    var imageUri by remember {
+        mutableStateOf(emptyImageUri)
+    }
+
+    if (imageUri != emptyImageUri) {
+        Box(modifier) {
+            GlideImage(
+                model = imageUri,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize()
+            )
+            IconButton(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                onClick = {
+                    imageUri = emptyImageUri
+                }) {
+                Icon(imageVector = Icons.Outlined.Delete, contentDescription = "delete button")
+            }
+        }
+    } else {
+        CameraContent(
+            modifier = modifier,
+            onImageFile = {
+                imageUri = it.toUri()
+            }
+        )
+    }
+}
+

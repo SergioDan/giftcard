@@ -11,4 +11,5 @@
 
     <string name="no_camera">Oh! yikes, no Camera!</string>
     <string name="open_settings">Open Settings</string>
+    <string name="capture">📸</string>
 </resources>
