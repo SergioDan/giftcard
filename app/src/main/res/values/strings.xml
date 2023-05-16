@@ -13,4 +13,6 @@
     <string name="open_settings">Open Settings</string>
     <string name="capture">📸</string>
     <string name="loved_ones">Your Family</string>
+    <string name="delete">Delete Photo</string>
+    <string name="next">Next</string>
 </resources>

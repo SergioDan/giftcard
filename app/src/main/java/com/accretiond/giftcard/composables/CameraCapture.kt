@@ -1,6 +1,8 @@
 package com.accretiond.giftcard.composables
 
+import android.graphics.drawable.Icon
 import android.util.Log
+import android.view.Surface
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
@@ -9,8 +11,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Camera
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,7 +60,7 @@ fun CameraCapture(
             mutableStateOf(
                 ImageCapture.Builder()
                     .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                    .setTargetRotation(0)
+                    .setTargetRotation(Surface.ROTATION_0)
                     .build()
             )
         }
@@ -69,20 +76,22 @@ fun CameraCapture(
             modifier = Modifier
                 .wrapContentSize()
                 .padding(16.dp)
-                .align(Alignment.BottomCenter)
-                .background(Color.Transparent),
+                .align(Alignment.BottomCenter),
+            colors = ButtonDefaults
+                .buttonColors(
+                    containerColor = Color.Cyan,
+                    contentColor = Color.Black
+                ),
             onClick = {
                 coroutineScope.launch {
                     onImageFile(imageCaptureUseCase.takePicture(context.executor))
                 }
             }
         ) {
-            Text(
-                stringResource(id = R.string.capture),
-                fontSize = 32.sp,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .background(Color.Transparent)
+            Icon(
+                imageVector = Icons.Outlined.Camera,
+                contentDescription = null,
+                modifier = Modifier.size(32.dp)
             )
         }
 
