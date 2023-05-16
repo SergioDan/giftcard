@@ -7,6 +7,7 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.NavigateNext
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -37,6 +40,7 @@ import androidx.core.net.toUri
 import com.accretiond.giftcard.R
 import com.accretiond.giftcard.composables.ButtonWithText
 import com.accretiond.giftcard.composables.CameraCapture
+import com.accretiond.giftcard.composables.ContentScaleMenu
 import com.accretiond.giftcard.composables.Permission
 import com.accretiond.styletransfer.TransformationActivity
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -92,6 +96,10 @@ fun CameraMainContent(
         mutableStateOf(emptyImageUri)
     }
 
+    var contentScale: ContentScale by remember {
+        mutableStateOf(ContentScale.None)
+    }
+
     val context = LocalContext.current
 
     val launcher = rememberLauncherForActivityResult(
@@ -108,36 +116,44 @@ fun CameraMainContent(
             GlideImage(
                 model = imageUri,
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
+                contentScale = contentScale,
                 alignment = Alignment.TopCenter,
                 modifier = Modifier.fillMaxSize()
             )
-            Row(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                ButtonWithText(
-                    imageVector = Icons.Outlined.Delete,
-                    text = stringResource(id = R.string.delete),
-                    onClick = {
-                        imageUri = emptyImageUri
-                    },
-                    modifier = Modifier.weight(1f)
+            Column(modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(8.dp),) {
+                ContentScaleMenu(
+                    modifier = Modifier.background(Color.Cyan),
+                    onContentScale = {
+                        contentScale = it
+                    }
                 )
-                ButtonWithText(
-                    imageVector = Icons.Outlined.NavigateNext,
-                    text = stringResource(id = R.string.next),
-                    onClick = {
-                        launcher.launch(
-                            Intent(context, TransformationActivity::class.java).apply {
-                                this.putExtra("path", imageUri.path)
-                            }
-                        )
-                    },
-                    modifier = Modifier.weight(1f)
-                )
+                Row(
+
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    ButtonWithText(
+                        imageVector = Icons.Outlined.Delete,
+                        text = stringResource(id = R.string.delete),
+                        onClick = {
+                            imageUri = emptyImageUri
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    ButtonWithText(
+                        imageVector = Icons.Outlined.NavigateNext,
+                        text = stringResource(id = R.string.next),
+                        onClick = {
+                            launcher.launch(
+                                Intent(context, TransformationActivity::class.java).apply {
+                                    this.putExtra("path", imageUri.path)
+                                }
+                            )
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
     } else {

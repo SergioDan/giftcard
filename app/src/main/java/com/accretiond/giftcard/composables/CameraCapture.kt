@@ -8,8 +8,11 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -34,9 +37,13 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toFile
 import com.accretiond.giftcard.R
 import com.accretiond.giftcard.utils.takePicture
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayInputStream
 import java.io.File
 
 @Composable
@@ -72,26 +79,70 @@ fun CameraCapture(
             }
         )
 
-        Button(
+        Row(
             modifier = Modifier
-                .wrapContentSize()
-                .padding(16.dp)
                 .align(Alignment.BottomCenter),
-            colors = ButtonDefaults
-                .buttonColors(
-                    containerColor = Color.Cyan,
-                    contentColor = Color.Black
-                ),
-            onClick = {
-                coroutineScope.launch {
-                    onImageFile(imageCaptureUseCase.takePicture(context.executor))
-                }
-            }
+            horizontalArrangement = Arrangement
+                .spacedBy(8.dp)
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Camera,
-                contentDescription = null,
-                modifier = Modifier.size(32.dp)
+            Button(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(16.dp),
+                colors = ButtonDefaults
+                    .buttonColors(
+                        containerColor = Color.Cyan,
+                        contentColor = Color.Black
+                    ),
+                onClick = {
+                    coroutineScope.launch {
+                        onImageFile(imageCaptureUseCase.takePicture(context.executor))
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Camera,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+
+            PhotoPicker(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(16.dp)
+                    .height(48.dp),
+                onImageUriChange = {
+                    it?.let { uri ->
+                        coroutineScope.launch {
+                            // save result to file
+                            val file = withContext(Dispatchers.IO) {
+                                kotlin.runCatching {
+                                    File.createTempFile("selected_image", "jpg")
+                                }.getOrElse {exception ->
+                                    Log.e("TakePicture", "Failed to create temporary file", exception)
+                                    File("/dev/null")
+                                }
+                            }
+
+                            context.contentResolver.openInputStream(uri)?.let {content ->
+                                val inputStream = ByteArrayInputStream(content.readBytes())
+
+                                inputStream.use { input ->
+                                    file.outputStream().use { output ->
+                                        input.copyTo(output)
+                                    }
+                                }
+                                withContext(Dispatchers.IO) {
+                                    content.close()
+                                }
+                            }
+
+
+                            onImageFile(file)
+                        }
+                    }
+                }
             )
         }
 
