@@ -1,7 +1,18 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">GiftCard</string>
     <string name="happy_mother_s_day_mom">Happy Mother\'s Day! 🥳🎉</string>
     <string name="your_son">Your son</string>
     <string name="your_son_and_husband">Your son and Husband</string>
     <string name="your_brother">Your brother</string>
+
+    <string name="permission_explanation">This permission is important for this app. Please allow its usage.</string>
+    <string name="permission_alert_title">Permission request</string>
+    <string name="permission_alert_confirm">Allow</string>
+
+    <string name="no_camera">Oh! yikes, no Camera!</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="capture">📸</string>
+    <string name="loved_ones">Your Family</string>
+    <string name="delete">Delete Photo</string>
+    <string name="next">Next</string>
 </resources>
